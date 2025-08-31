@@ -43,8 +43,8 @@ Para executar este projeto, certifique-se de ter o **Docker** e o **Docker Compo
     * Navegue até o diretório do projeto no seu terminal.
     * Execute `docker-compose up -d --build`.
 3.  **Teste e Validação:**
-    * Acesse a aplicação em `[http://localhost:8080](http://localhost:8080/web/brinquedos)`.
-    * Acesse o Adminer em `[http://localhost:8081](http://localhost:8081/web/brinquedos)` e conecte-se ao banco de dados:
+    * Acesse a aplicação em `http://localhost:8080/web/brinquedos`.
+    * Acesse o Adminer em `http://localhost:8081/web/brinquedos` e conecte-se ao banco de dados:
         * **Sistema:** PostgreSQL
         * **Servidor:** db
         * **Usuário:** user
