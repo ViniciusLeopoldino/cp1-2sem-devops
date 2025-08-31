@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # Serviço da sua aplicação Java
+  app:
+    build: .
+    container_name: brinquedos-app
+    restart: on-failure # Política de restart
+    depends_on:
+      db:
+        condition: service_healthy # Garante que o banco suba antes da app
+    ports:
+      - "8080:8080" # Mapeia a porta da sua máquina para a do contêiner
+    environment:
+      # Variáveis de ambiente para conectar ao banco
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/brinquedosdb
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - app-network
+
+  # Serviço do Banco de Dados PostgreSQL
+  db:
+    image: postgres:14-alpine # Imagem oficial
+    container_name: postgres-db
+    restart: always
+    environment:
+      - POSTGRES_DB=brinquedosdb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # Volume para persistência de dados
+    networks:
+      - app-network
+    healthcheck: # Healthcheck para monitorar a saúde do banco
+      test: ["CMD-SHELL", "pg_isready -U user -d brinquedosdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Serviço do Adminer para gerenciar o banco
+  adminer:
+    image: adminer:latest # Imagem oficial
+    container_name: adminer-ui
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+# Definição dos volumes e redes
+volumes:
+  postgres-data: # Gerenciamento de volumes
+    driver: local
+
+networks:
+  app-network: # Configuração de rede
+    driver: bridge
